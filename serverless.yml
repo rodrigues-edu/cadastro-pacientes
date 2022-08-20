@@ -1,6 +1,10 @@
+org: remainingwildcat
 console: true
 
 service: cadastro-pacientes
+
+plugins:
+  - serverless-offline
 
 frameworkVersion: '3'
 

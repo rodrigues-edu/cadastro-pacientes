@@ -15,3 +15,7 @@ provider:
 functions:
   listarPacientes:
     handler: handler.listarPacientes
+    events:
+      - http:
+          path: pacientes
+          method: get

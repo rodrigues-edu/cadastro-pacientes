@@ -7,6 +7,25 @@ plugins:
 
 frameworkVersion: '3'
 
+custom:
+  dynamodb:
+    # If you only want to use DynamoDB Local in some stages, declare them here
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      heapInitial: 200m
+      heapMax: 1g
+      migrate: true
+      seed: true
+      convertEmptyValues: true
+    seed:
+      domain:
+        sources:
+          - table: PACIENTES
+            sources: [./offline/migrations/pacientes-seed.json]
+
 provider:
   name: aws
   runtime: nodejs12.x

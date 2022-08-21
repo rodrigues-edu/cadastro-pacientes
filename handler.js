@@ -29,12 +29,44 @@ const params = {
 };
 
 module.exports.listarPacientes = async (event) => {
+    // MySQL
+    // SELECT * FROM table LIMIT 10 OFFSET 21
+    // DynamoDB
+    // Limit = LIMIT, ExclusiveStartKey = OFFSET e LastEvaluatedKey = "Numero da Pagina"
+
     try {
-        let data = await dynamoDb.scan(params).promise();
+        const queryString = {
+            limit: 5,
+            ...event.queryStringParameters
+        }
+
+        const { limit, next } = queryString
+
+        let localParams = {
+            ...params,
+            Limit: limit
+        }
+
+        if (next) {
+            localParams.ExclusiveStartKey = {
+                paciente_id: next
+            }
+        }
+
+        let data = await dynamoDb.scan(localParams).promise();
+
+        let nextToken = data.LastEvaluatedKey != undefined
+            ? data.LastEvaluatedKey.paciente_id
+            : null;
+
+        const result = {
+            items: data.Items,
+            next_token: nextToken
+        }
 
         return {
             statusCode: 200,
-            body: JSON.stringify(data.Items),
+            body: JSON.stringify(result),
         };
     } catch (err) {
         console.log("Error", err);

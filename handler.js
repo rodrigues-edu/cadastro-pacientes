@@ -5,7 +5,7 @@ const pacientes = [
     { id: 3, nome: "Jose", dataNascimento: "1998-06-06" },
 ];
 
-const AWS = require('aws-sdk');
+const AWS = require("aws-sdk");
 const { v4: uuidv4 } = require("uuid");
 
 const dynamodbOfflineOptions = {
@@ -21,11 +21,6 @@ const dynamoDb = isOffline()
 
 const params = {
     TableName: process.env.PACIENTES_TABLE,
-};
-
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
-const params = {
-    TableName: "PACIENTES",
 };
 
 module.exports.listarPacientes = async (event) => {
@@ -99,6 +94,7 @@ module.exports.obterPaciente = async (event) => {
                 body: JSON.stringify({ error: "Paciente não existe" }, null, 2),
             };
         }
+
         const paciente = data.Item;
 
         return {

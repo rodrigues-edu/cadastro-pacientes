@@ -5,15 +5,13 @@ plugins:
   - serverless-dynamodb-local
   - serverless-offline
 
-frameworkVersion: '3'
-
 custom:
   dynamodb:
     # If you only want to use DynamoDB Local in some stages, declare them here
     stages:
       - dev
     start:
-      port: 8070
+      port: 8000
       inMemory: true
       heapInitial: 200m
       heapMax: 1g
@@ -30,9 +28,11 @@ provider:
   name: aws
   runtime: nodejs12.x
 
-# you can overwrite defaults here
+  # you can overwrite defaults here
   stage: dev
   region: us-east-1
+  environment:
+    PACIENTES_TABLE: 'PACIENTES-${opt:stage, self:provider.stage}'
 
   iamRoleStatements:
     - Effect: Allow
@@ -43,7 +43,7 @@ provider:
         - dynamodb:DeleteItem
         - dynamodb:GetItem
         - dynamodb:UpdateItem
-      Resource: arn:aws:dynamodb:us-east-1:225115542759:table/PACIENTES
+      Resource: 'arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.PACIENTES_TABLE}'
 
 functions:
   listarPacientes:
@@ -81,12 +81,13 @@ functions:
           path: pacientes/{pacienteId}
           method: delete
 
+
 resources:
   Resources:
     PacientesTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: PACIENTES
+        TableName: ${self:provider.environment.PACIENTES_TABLE}
         AttributeDefinitions:
           - AttributeName: paciente_id
             AttributeType: S

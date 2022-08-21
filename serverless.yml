@@ -1,6 +1,8 @@
 service: cadastro-pacientes
 
 plugins:
+  # npm i serverless-dynamodb-local --save-dev && sls dynamodb install
+  - serverless-dynamodb-local
   - serverless-offline
 
 frameworkVersion: '3'

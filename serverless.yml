@@ -13,7 +13,7 @@ custom:
     stages:
       - dev
     start:
-      port: 8000
+      port: 8070
       inMemory: true
       heapInitial: 200m
       heapMax: 1g
